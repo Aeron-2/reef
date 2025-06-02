@@ -85,7 +85,7 @@ Form Point {
 }
 
 Item Point {
-  fn distance() {
+  Fn distance() {
     // method body
   }
 }
