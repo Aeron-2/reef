@@ -58,7 +58,7 @@ nil         // null value
 ```reef
 1 + 2 * 3 == 7   // arithmetic and equality
 !true == false   // logical not and comparison
-!3 == -2         // negate number
+!3 == -3         // negate number
 ```
 
 ### 🧠 Variables & Constants *(planned)*
