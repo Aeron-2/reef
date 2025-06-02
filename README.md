@@ -28,6 +28,8 @@ Reef is a dynamically typed, Rust-inspired language that supports concepts like 
 - String object (`ObjString`) with custom layout
 - Equality comparisons done via raw slice comparison
 
+## GC *(planned)*
+
 # ⚙️ Optimizations
 
 - Open-addressing hash table (`Table`) with tombstones
@@ -39,7 +41,6 @@ Reef is a dynamically typed, Rust-inspired language that supports concepts like 
 - Bytecode disassembler with opcode/line printing
 - Debug trace of VM execution (only in debug mode)
 - Runtime error propagation with line info
-
 
 ---
 # 🌊 Reef Language Syntax
