@@ -13,3 +13,4 @@ pub const OP_EQUAL: u8 = 0x0C;
 pub const OP_GREATER: u8 = 0x0D;
 pub const OP_LESS: u8 = 0x0E;
 pub const OP_POP: u8 = 0x0F;
+pub const OP_DEFINE_GLOBAL: u8 = 0x10;

@@ -82,14 +82,29 @@ impl Compiler {
     }
 
     pub fn declaration(&mut self) {
-        self.statement();
+        match self.current.token_type {
+            TokenType::Let => {
+                self.consume(TokenType::Identifier);
+                let key = self.previous;
+                let obj_ptr: *mut Obj = unsafe { make_obj_str(key.start, key.line) as *mut Obj };
+                self.chunk.write_constant(Values::Obj(obj_ptr), key.line as u32);
+
+                if self.current.token_type == TokenType::Equal {
+                    self.parse_precedence(Precedence::Assignment);
+                } else {
+                    self.chunk.write_byte(OP_NIL, key.line as u32);
+                }
+                self.consume(TokenType::Semicolon);
+                self.chunk.write_byte(OP_DEFINE_GLOBAL, key.line as u32);
+            },
+            _ => self.statement(),
+        }
 
         if self.panic_mode { self.synchronize(); }
     }
 
     pub fn statement(&mut self) {
         match self.current.token_type {
-            TokenType::Let => {},
             _ => self.expression_statement(),
         }
     }
@@ -135,6 +150,10 @@ impl Compiler {
 
             self.advance();
         }
+    }
+
+    pub fn parse_variables(&self) {
+        
     }
 
     pub fn number(&mut self) {
