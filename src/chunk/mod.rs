@@ -80,6 +80,7 @@ impl Chunk {
             OP_EQUAL => self.return_instruction(idx, line, "OP_EQUAL"),
             OP_GREATER => self.return_instruction(idx, line, "OP_GREATER"),
             OP_LESS => self.return_instruction(idx, line, "OP_LESS"),
+            OP_POP => self.return_instruction(idx, line, "OP_POP"),
             _ => {
                 panic!("Lexer: Unknown Opcode {}", opcode);
             },

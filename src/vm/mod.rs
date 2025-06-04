@@ -212,6 +212,9 @@ impl VM {
                         }
                     }
                 },
+                OP_POP => {
+                    self.stack.pop();
+                },
                 _ => return InterpretResult::RuntimeError {
                     message : String::from("Fatal! Something wrong happened..."),
                     line,

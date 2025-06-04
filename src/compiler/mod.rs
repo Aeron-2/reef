@@ -15,6 +15,7 @@ pub struct Compiler {
     current: Token,
     previous: Token,
     is_error: bool,
+    panic_mode: bool,
 }
 
 impl Compiler {
@@ -25,12 +26,15 @@ impl Compiler {
             current: Token::dummy(),
             previous: Token::dummy(),
             is_error: false,
+            panic_mode: false,
         }
     }
 
     pub fn compile(mut self) -> Option<Chunk> {
         self.advance();
-        self.parse_precedence(Precedence::Assignment);
+        while self.current.token_type != TokenType::Eof {
+            self.declaration();
+        }
         self.output_chunk()
     }
 
@@ -51,6 +55,7 @@ impl Compiler {
     pub fn consume(&mut self, expected: TokenType) {
         if self.current.token_type == expected { return self.advance(); }
         self.error_at_current();
+        self.panic_mode = true;
     }
 
     pub fn advance(&mut self) {
@@ -60,7 +65,8 @@ impl Compiler {
             self.current = self.token_stream.scan_token();
             if self.current.token_type != TokenType::Error { break; }
 
-            self.error_at_current();
+            if !self.panic_mode { self.error_at_current(); }
+            self.panic_mode = true;
         }
     }
 
@@ -73,6 +79,25 @@ impl Compiler {
         eprintln!("[line {}] Error! : 'error occured at \"{}\"...'", token.line, error_message_or_error_token);
 
         self.is_error = true;
+    }
+
+    pub fn declaration(&mut self) {
+        self.statement();
+
+        if self.panic_mode { self.synchronize(); }
+    }
+
+    pub fn statement(&mut self) {
+        match self.current.token_type {
+            TokenType::Let => {},
+            _ => self.expression_statement(),
+        }
+    }
+
+    pub fn expression_statement(&mut self) {
+        self.parse_precedence(Precedence::Assignment);
+        self.consume(TokenType::Semicolon);
+        self.chunk.write_byte(OP_POP, self.current.line as u32);
     }
 
     pub fn parse_precedence(&mut self, precedence: Precedence) {
@@ -94,6 +119,21 @@ impl Compiler {
                 self.error_at_current();
                 break;
             }
+        }
+    }
+
+    pub fn synchronize(&mut self) {
+        self.panic_mode = false;
+        
+        while self.current.token_type != TokenType::Eof {
+            if self.previous.token_type == TokenType::Semicolon { return; }
+            match self.current.token_type {
+                TokenType::For | TokenType::If | TokenType::While | TokenType::Let |
+                TokenType::Fn | TokenType::Item | TokenType::Return => return,
+                _ => {},
+            }
+
+            self.advance();
         }
     }
 
