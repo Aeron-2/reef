@@ -62,14 +62,14 @@ nil         // null value
 !3 == -3         // negate number
 ```
 
-### 🧠 Variables & Constants *(planned)*
+### 🧠 Variables & Constants *(work in progress)*
 ```reef
 Fn hello() {}
 let x = 10;
 x = x + 1;
 ```
 
-### 🧱 Blocks & Conditionals *(planned)*
+### 🧱 Blocks & Conditionals *(work in progress)*
 ```reef
 if (x > 0) {
   print "positive";
